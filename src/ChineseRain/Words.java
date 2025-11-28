@@ -46,15 +46,6 @@ public class Words {
         return new String[] { word, meaning };
     }
 
-    // 단어 제거
-    // public static void removeWord(String word, String meaning) {
-    // int idx = wordList.indexOf(word);
-    // if (idx != -1 && meaningList.get(idx).equals(meaning)) {
-    // wordList.remove(idx);
-    // meaningList.remove(idx);
-    // }
-    // }
-
     // 잔여 단어 확인
     public static boolean isEmpty() {
         return wordList.isEmpty();
