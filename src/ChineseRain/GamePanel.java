@@ -13,8 +13,8 @@ public class GamePanel extends JPanel implements Runnable {
     public GamePanel() {
         setLayout(null);
 
-        // test word
-        for (int i = 0; i < 5; i++) {
+        // 게임 시작 시 3개 떨어뜨리기
+        for (int i = 0; i < 3; i++) {
             String[] wm = Words.getRandomWord();
             int x = 50 + i * 80;
             words.add(new FallingWord(wm[0], wm[1], x));
@@ -25,17 +25,27 @@ public class GamePanel extends JPanel implements Runnable {
         inputField.setBounds(50, 600, 400, 30);
         add(inputField);
 
-        // answer check
-        inputField = new JTextField();
-        inputField.setBounds(50, 600, 400, 30);
-        add(inputField);
-
+        // 입력 엔터처리
         inputField.addActionListener(e -> {
             String answer = inputField.getText().trim();
 
-            for (FallingWord fw : words) {
+            for (int i = words.size() - 1; i >= 0; i--) {
+                FallingWord fw = words.get(i);
+
                 if (fw.checkAnswer(answer)) {
-                    fw.reset(fw.getX());
+                    Words.removeWord(fw.getWord(), fw.getMeaning());
+                    words.remove(i);
+
+                    // 단어가 사라지면 종료
+                    if (Words.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "모든 단어를 맞추셨습니다! 게임 종료!");
+                        System.exit(0);
+                    }
+                    // 새로운 단어 추가
+                    String[] wm = Words.getRandomWord();
+                    int x = fw.getX();
+                    words.add(new FallingWord(wm[0], wm[1], x));
+
                     break;
                 }
             }
@@ -43,6 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
             inputField.setText("");
         });
 
+        // 게임 스레드 시작
         gameThread = new Thread(this);
         gameThread.start();
     }
