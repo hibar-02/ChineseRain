@@ -25,7 +25,7 @@ public class FallingWord {
     public void draw(Graphics g) {
         if (!active)
             return;
-        g.setFont(new Font("Serif", Font.BOLD, 24));
+        g.setFont(new Font("Noto Sans CJK", Font.BOLD, 20));
         g.setColor(Color.BLACK);
         g.drawString(word, x, y);
     }
