@@ -1,4 +1,4 @@
-import javax.swing.SwingUtilities;
+package ChineseRain;
 
 public class Main {
     public static void main(String[] args) {
