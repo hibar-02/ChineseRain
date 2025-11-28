@@ -8,6 +8,7 @@ import java.util.Iterator;
 public class GamePanel extends JPanel implements Runnable {
 
     private ArrayList<FallingWord> words = new ArrayList<>();
+    private ArrayList<String> wrongWords = new ArrayList<>();
     private JTextField inputField;
     private Thread gameThread;
     private Image MainImage;
@@ -19,7 +20,7 @@ public class GamePanel extends JPanel implements Runnable {
     private int correctWords = 0;
 
     // 타이머
-    private int timeLimit = 20; // 60초
+    private int timeLimit = 60; // 60초
     private long startTime;
 
     // 생성자
@@ -113,6 +114,7 @@ public class GamePanel extends JPanel implements Runnable {
 
             // 화면 아래로 떨어지면 제거
             if (fw.isOutOfScreen(getHeight())) {
+                wrongWords.add(fw.getWord());
                 words.remove(i);
                 i--;
             }
@@ -126,7 +128,7 @@ public class GamePanel extends JPanel implements Runnable {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
             frame.getContentPane().removeAll();
-            frame.add(new GameOverPanel(totalWords, correctWords));
+            frame.add(new GameOverPanel(totalWords, correctWords, wrongWords));
             frame.revalidate();
             frame.repaint();
         });
