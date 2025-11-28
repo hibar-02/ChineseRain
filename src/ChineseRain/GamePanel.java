@@ -10,34 +10,34 @@ public class GamePanel extends JPanel implements Runnable {
     private ArrayList<FallingWord> words = new ArrayList<>();
     private JTextField inputField;
     private Thread gameThread;
+    private long lastSpawnTime = 0;
+    private int spawnInterval = 1500; // 1.5초마다 단어 생성
+    private int maxWords = 4; // 화면에 동시에 4개까지만
+
+    private void addNewWord() {
+        if (Words.isEmpty())
+            return;
+
+        String[] wm = Words.getRandomWord();
+
+        int x = (int) (Math.random() * (getWidth() - 100)); // 화면 전체 랜덤 X위치
+        words.add(new FallingWord(wm[0], wm[1], x));
+    }
 
     public GamePanel() {
         setLayout(null);
+        setBackground(Color.RED);
 
-        // 게임 시작 시 3개 떨어뜨리기
-        for (int i = 0; i < 3; i++) {
-            String[] wm = Words.getRandomWord();
-            int x = 50 + i * 80;
-            words.add(new FallingWord(wm[0], wm[1], x));
-        }
-
-        // input field
         inputField = new JTextField();
         inputField.setBounds(50, 600, 400, 30);
         add(inputField);
 
-        // 입력 엔터처리
         inputField.addActionListener(e -> {
             String answer = inputField.getText().trim();
 
             for (FallingWord fw : words) {
                 if (fw.checkAnswer(answer)) {
-                    // 단어가 사라지면 종료
-                    if (Words.isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "모든 단어를 맞추셨습니다! 게임 종료!");
-                        System.exit(0);
-                    }
-                    fw.reset(fw.getX());
+                    words.remove(fw);
                     break;
                 }
             }
@@ -63,21 +63,23 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void updateWords() {
-        Iterator<FallingWord> it = words.iterator();
+        long currentTime = System.currentTimeMillis();
 
-        while (it.hasNext()) {
-            FallingWord fw = it.next();
+        // 새 단어 생성 (시간 + 최대 숫자 제한)
+        if (currentTime - lastSpawnTime > spawnInterval && words.size() < maxWords) {
+            addNewWord();
+            lastSpawnTime = currentTime;
+        }
+
+        // 단어 이동
+        for (int i = 0; i < words.size(); i++) {
+            FallingWord fw = words.get(i);
             fw.update();
 
-            // 화면 벗어나면
+            // 화면 아래로 떨어지면 제거
             if (fw.isOutOfScreen(getHeight())) {
-
-                if (Words.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "모든 단어를 맞추셨습니다! 게임 종료!");
-                    System.exit(0);
-                }
-
-                fw.reset(fw.getX());
+                words.remove(i);
+                i--;
             }
         }
     }
