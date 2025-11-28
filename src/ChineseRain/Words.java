@@ -34,18 +34,26 @@ public class Words {
 
     // random 단어 반환
     public static String[] getRandomWord() {
+        if (wordList.isEmpty()) {
+            return null;
+        }
+
         int idx = random.nextInt(wordList.size());
-        return new String[] { wordList.get(idx), meaningList.get(idx) };
+
+        String word = wordList.remove(idx);
+        String meaning = meaningList.remove(idx);
+
+        return new String[] { word, meaning };
     }
 
     // 단어 제거
-    public static void removeWord(String word, String meaning) {
-        int idx = wordList.indexOf(word);
-        if (idx != -1 && meaningList.get(idx).equals(meaning)) {
-            wordList.remove(idx);
-            meaningList.remove(idx);
-        }
-    }
+    // public static void removeWord(String word, String meaning) {
+    // int idx = wordList.indexOf(word);
+    // if (idx != -1 && meaningList.get(idx).equals(meaning)) {
+    // wordList.remove(idx);
+    // meaningList.remove(idx);
+    // }
+    // }
 
     // 잔여 단어 확인
     public static boolean isEmpty() {

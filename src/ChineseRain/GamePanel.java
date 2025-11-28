@@ -3,6 +3,7 @@ package ChineseRain;
 import java.awt.*;
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -29,27 +30,17 @@ public class GamePanel extends JPanel implements Runnable {
         inputField.addActionListener(e -> {
             String answer = inputField.getText().trim();
 
-            for (int i = words.size() - 1; i >= 0; i--) {
-                FallingWord fw = words.get(i);
-
+            for (FallingWord fw : words) {
                 if (fw.checkAnswer(answer)) {
-                    Words.removeWord(fw.getWord(), fw.getMeaning());
-                    words.remove(i);
-
                     // 단어가 사라지면 종료
                     if (Words.isEmpty()) {
                         JOptionPane.showMessageDialog(this, "모든 단어를 맞추셨습니다! 게임 종료!");
                         System.exit(0);
                     }
-                    // 새로운 단어 추가
-                    String[] wm = Words.getRandomWord();
-                    int x = fw.getX();
-                    words.add(new FallingWord(wm[0], wm[1], x));
-
+                    fw.reset(fw.getX());
                     break;
                 }
             }
-
             inputField.setText("");
         });
 
@@ -72,10 +63,20 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void updateWords() {
-        for (FallingWord fw : words) {
+        Iterator<FallingWord> it = words.iterator();
+
+        while (it.hasNext()) {
+            FallingWord fw = it.next();
             fw.update();
 
+            // 화면 벗어나면
             if (fw.isOutOfScreen(getHeight())) {
+
+                if (Words.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "모든 단어를 맞추셨습니다! 게임 종료!");
+                    System.exit(0);
+                }
+
                 fw.reset(fw.getX());
             }
         }

@@ -14,7 +14,7 @@ public class FallingWord {
         this.meaning = meaning;
         this.x = x;
         this.y = 0;
-        this.speed = 1 + (int) (Math.random() * 4);
+        this.speed = 1;
     }
 
     public void update() {
